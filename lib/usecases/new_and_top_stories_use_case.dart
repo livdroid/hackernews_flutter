@@ -1,5 +1,5 @@
 
-import '../entity/story.dart';
+import 'package:flutter_hcknews/entity/story.dart';
 
 abstract class NewAndTopStoriesUseCase {
   Future<List<Story>> fetchStories();
