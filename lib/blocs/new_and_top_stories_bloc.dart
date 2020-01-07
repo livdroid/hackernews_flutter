@@ -7,21 +7,21 @@ import 'package:flutter_hcknews/entity/story.dart';
 class NewAndTopStoriesBloc implements BaseBloc {
   final NewAndTopStoriesUseCase _useCase;
 
-  final StreamController _controller = StreamController<State>.broadcast();
+  final StreamController _controller = StreamController<NewTopStoryState>.broadcast();
 
   NewAndTopStoriesBloc(this._useCase);
 
-  Stream<State> get stream => _controller.stream;
+  Stream<NewTopStoryState> get stream => _controller.stream;
 
   void fetchNewAndTopStories() async {
     try {
-      _controller.sink.add(LoadingState());
+      _controller.sink.add(NewTopStoryLoadingState());
       var storyList = await _useCase.fetchStories();
-      _controller.sink.add(ResultState<List<Story>>(storyList));
+      _controller.sink.add(NewTopStoryResultState<List<Story>>(storyList));
     } on FetchStoriesException {
-      _controller.sink.add(ErrorState("Network Error"));
+      _controller.sink.add(NewTopStoryErrorState("Network Error"));
     } on EmptyStoriesException {
-      _controller.sink.add(ErrorState("No Story found"));
+      _controller.sink.add(NewTopStoryErrorState("No Story found"));
     }
   }
 
@@ -31,22 +31,22 @@ class NewAndTopStoriesBloc implements BaseBloc {
   }
 }
 
-class State {}
+class NewTopStoryState {}
 
-class LoadingState extends State {}
+class NewTopStoryLoadingState extends NewTopStoryState {}
 
-class ResultState<T> extends State {
+class NewTopStoryResultState<T> extends NewTopStoryState {
   T _value;
 
-  ResultState(this._value);
+  NewTopStoryResultState(this._value);
 
   T get value => _value;
 }
 
-class ErrorState extends State {
+class NewTopStoryErrorState extends NewTopStoryState {
   String _errorMsg;
 
-  ErrorState(this._errorMsg);
+  NewTopStoryErrorState(this._errorMsg);
 
   String get error => _errorMsg;
 }

@@ -5,6 +5,7 @@ class Story {
   int parent;
   String text;
   int time;
+  int score;
   String type;
 
   Story(
@@ -14,15 +15,17 @@ class Story {
         this.parent,
         this.text,
         this.time,
+        this.score,
         this.type});
 
   Story.fromJson(Map<String, dynamic> json) {
     by = json['by'];
     id = json['id'];
-    kids = json['kids'].cast<int>();
+    kids = json['kids'] != null ? json['kids'].cast<int>() : <int>[];
     parent = json['parent'];
-    text = json['text'];
+    text = json['title'] != null ? json['title'] : "";
     time = json['time'];
+    score = json['score'] != null ? json['score'] : 0;
     type = json['type'];
   }
 
@@ -34,6 +37,7 @@ class Story {
     data['parent'] = this.parent;
     data['text'] = this.text;
     data['time'] = this.time;
+    data['score'] = this.score;
     data['type'] = this.type;
     return data;
   }
