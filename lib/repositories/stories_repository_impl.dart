@@ -2,17 +2,18 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter_hcknews/entity/story.dart';
-
 import 'package:flutter_hcknews/usecases/new_and_top_stories_use_case.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 
 const newAndTopStoriesURL =
     'https://hacker-news.firebaseio.com/v0/topstories.json';
 const storyById = 'https://hacker-news.firebaseio.com/v0/item/';
 
 class StoriesRepositoryImpl implements StoriesRepository {
-  final hackerNewsService = HackerNewsServiceImpl(client: http.Client());
+  HackerNewsService hackerNewsService;
+  StoriesRepositoryImpl({this.hackerNewsService});
 
   @override
   Future<List<Story>> getNewAndTopStories() async {
@@ -25,9 +26,7 @@ class StoriesRepositoryImpl implements StoriesRepository {
 }
 
 class HackerNewsServiceImpl implements HackerNewsService {
-  http.Client client;
-
-  HackerNewsServiceImpl({@required this.client});
+  Client client = http.Client();
 
   Future<List<int>> fetchNewsAndTopStories() async {
     final response = await client.get('$newAndTopStoriesURL');
@@ -50,6 +49,7 @@ class HackerNewsServiceImpl implements HackerNewsService {
 
 abstract class HackerNewsService {
   Future<List<int>> fetchNewsAndTopStories();
+  Future<Story> getStoryById(int storyId) {}
 }
 
 Story parseStory(String body) {

@@ -19,7 +19,7 @@ void main() {
 
   setUp(() {
     mockClient = MockClient();
-    hackerNewsService = HackerNewsServiceImpl(client: http.Client());
+    hackerNewsService = HackerNewsServiceImpl();
   });
 
   group('get list of story ids', () {
