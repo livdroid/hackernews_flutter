@@ -3,29 +3,32 @@ import 'package:flutter_hcknews/repositories/stories_repository_impl.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
-class MockService extends Mock implements HackerNewsService {}
-
-class StoriesRepositoryMock extends Mock implements StoriesRepositoryImpl {
-  StoriesRepositoryMock(MockService hackerNewsService);
-}
+class HackerNewsServiceMock extends Mock implements HackerNewsService {}
 
 void main() {
-  MockService hackerNewsService;
-  StoriesRepositoryMock storiesRepositoryMock;
-
-  var expectedStoryList = [Story(), Story()];
+  HackerNewsServiceMock hackerNewsService;
 
   setUp(() {
-    storiesRepositoryMock = StoriesRepositoryMock(hackerNewsService);
+    hackerNewsService = HackerNewsServiceMock();
   });
+
+  var expectedInt = [1, 2];
+  var expectedStory = Story();
+  List<Story> stories = List<Story>();
 
   test(
       ("When fetch new and top stories to the the repo"
           " And the request is successful"
           " Then should return a list of stories"), () async {
-    when(storiesRepositoryMock.getNewAndTopStories())
-        .thenAnswer((_) async => expectedStoryList);
-    final response = await storiesRepositoryMock.getNewAndTopStories();
-    expect(response, expectedStoryList);
+    when(hackerNewsService.fetchNewsAndTopStories())
+        .thenAnswer((_) async => expectedInt);
+
+    when(hackerNewsService.getStoryById(0))
+        .thenAnswer((_) async => expectedStory);
+
+    final idList = await hackerNewsService.fetchNewsAndTopStories();
+    final story = await hackerNewsService.getStoryById(idList[0]);
+    stories.add(story);
+    expect(stories, isInstanceOf<List<Story>>());
   });
 }
