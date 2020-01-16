@@ -2,6 +2,8 @@ import 'package:flutter_hcknews/usecases/new_and_top_stories_use_case.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
+import 'package:flutter_hcknews/entity/story.dart';
+
 class MockStoriesRepository extends Mock implements StoriesRepository {}
 
 void main() {

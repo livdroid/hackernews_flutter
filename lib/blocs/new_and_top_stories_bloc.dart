@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:flutter_hcknews/blocs/base_bloc.dart';
 import 'package:flutter_hcknews/usecases/new_and_top_stories_use_case.dart';
 
+import 'package:flutter_hcknews/entity/story.dart';
+
 class NewAndTopStoriesBloc implements BaseBloc {
   final NewAndTopStoriesUseCase _useCase;
 

@@ -1,11 +1,13 @@
 
+import 'package:flutter_hcknews/entity/story.dart';
+
 abstract class NewAndTopStoriesUseCase {
   Future<List<Story>> fetchStories();
 }
 
 class NewAndTopStoriesUseCaseImpl implements NewAndTopStoriesUseCase {
   final StoriesRepository _repository;
-
+  
   NewAndTopStoriesUseCaseImpl(this._repository);
 
   @override
@@ -32,7 +34,3 @@ abstract class StoriesRepository {
 
 // Exception for Repository
 class GetStoriesException implements Exception {}
-
-// Model
-class Story {
-}
