@@ -12,8 +12,8 @@ const newAndTopStoriesURL =
 const storyById = 'https://hacker-news.firebaseio.com/v0/item/';
 
 class StoriesRepositoryImpl implements StoriesRepository {
-  HackerNewsService hackerNewsService;
-  StoriesRepositoryImpl({this.hackerNewsService});
+  final HackerNewsService hackerNewsService;
+  StoriesRepositoryImpl({@required this.hackerNewsService});
 
   @override
   Future<List<Story>> getNewAndTopStories() async {
