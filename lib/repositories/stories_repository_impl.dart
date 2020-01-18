@@ -28,6 +28,7 @@ class StoriesRepositoryImpl implements StoriesRepository {
 class HackerNewsServiceImpl implements HackerNewsService {
   Client client = http.Client();
 
+  @override
   Future<List<int>> fetchNewsAndTopStories() async {
     final response = await client.get('$newAndTopStoriesURL');
     if (response.statusCode == 200) {
@@ -37,6 +38,7 @@ class HackerNewsServiceImpl implements HackerNewsService {
     }
   }
 
+  @override
   Future<Story> getStoryById(int storyId) async {
     final response = await client.get('$storyById$storyId.json');
     if (response.statusCode == 200) {
@@ -49,7 +51,9 @@ class HackerNewsServiceImpl implements HackerNewsService {
 
 abstract class HackerNewsService {
   Future<List<int>> fetchNewsAndTopStories();
-  Future<Story> getStoryById(int storyId) {}
+  Future<Story> getStoryById(int storyId) {
+    return null;
+  }
 }
 
 Story parseStory(String body) {
@@ -57,7 +61,7 @@ Story parseStory(String body) {
 }
 
 List<int> parseStoryList(String body) {
-  final listId = List<int>.from(json.decode(body).map((x) => x));
+  final listId = List<int>.from(json.decode(body).map((dynamic x) => x));
   return listId;
 }
 

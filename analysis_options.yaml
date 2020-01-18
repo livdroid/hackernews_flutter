@@ -1,0 +1,37 @@
+include: package:pedantic/analysis_options.yaml
+
+analyzer:
+  strong-mode:
+    implicit-casts: true
+    implicit-dynamic: true
+  exclude:
+    - test/**
+
+linter:
+  rules:
+    - file_names
+    - implementation_imports
+    - always_put_control_body_on_new_line
+    - always_put_required_named_parameters_first
+    - always_require_non_null_named_parameters
+    - avoid_classes_with_only_static_members
+    - avoid_empty_else
+    - camel_case_extensions
+    - camel_case_types
+    - annotate_overrides
+    - always_declare_return_types
+    - flutter_style_todos
+    - one_member_abstracts
+    - unnecessary_await_in_return
+    - unnecessary_brace_in_string_interps
+    - unnecessary_const
+    - unnecessary_getters_setters
+    - unnecessary_lambdas
+    - unnecessary_new
+    - unnecessary_null_aware_assignments
+    - unnecessary_null_in_if_null_operators
+    - unnecessary_overrides
+    - unnecessary_parenthesis
+    - unnecessary_statements
+    - unnecessary_this
+    - use_full_hex_values_for_flutter_colors

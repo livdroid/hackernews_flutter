@@ -7,7 +7,7 @@ import 'package:flutter_hcknews/entity/story.dart';
 class NewAndTopStoriesBloc implements BaseBloc {
   final NewAndTopStoriesUseCase _useCase;
 
-  final StreamController _controller = StreamController<NewTopStoryState>.broadcast();
+  final StreamController<NewTopStoryState> _controller = StreamController<NewTopStoryState>.broadcast();
 
   NewAndTopStoriesBloc(this._useCase);
 

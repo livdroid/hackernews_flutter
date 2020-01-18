@@ -14,7 +14,6 @@ class ItemStoryWidget extends StatelessWidget {
         Padding(
           padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
               Expanded(
@@ -55,7 +54,7 @@ class ItemStoryWidget extends StatelessWidget {
                         ),
                         Expanded(
                           child: Text(
-                            "${(((DateTime.now().millisecondsSinceEpoch / 1000) - story.time) / 3600).ceil()} days",
+                            "${story.getPastDays()} days",
                             style: TextStyle(color: Colors.black38),
                           ),
                         ),
@@ -100,5 +99,11 @@ class ItemStoryWidget extends StatelessWidget {
         )
       ],
     );
+  }
+}
+
+extension _StoryTimeConversion on Story {
+  int getPastDays() {
+    return (((DateTime.now().millisecondsSinceEpoch / 1000) - this.time) / 3600).ceil();
   }
 }
