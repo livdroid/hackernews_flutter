@@ -20,8 +20,8 @@ void main() {
     expect(
         bloc.stream,
         emitsInOrder([
-          isInstanceOf<LoadingState>(),
-          isInstanceOf<ErrorState>()
+          isInstanceOf<NewTopStoryLoadingState>(),
+          isInstanceOf<NewTopStoryErrorState>()
         ])
     );
 
@@ -40,8 +40,8 @@ void main() {
     expect(
         bloc.stream,
         emitsInOrder([
-          isInstanceOf<LoadingState>(),
-          isInstanceOf<ErrorState>()
+          isInstanceOf<NewTopStoryLoadingState>(),
+          isInstanceOf<NewTopStoryErrorState>()
         ])
     );
 
@@ -66,8 +66,8 @@ void main() {
     expect(
         bloc.stream,
         emitsInOrder([
-          isInstanceOf<LoadingState>(),
-          isInstanceOf<ResultState<List<Story>>>()
+          isInstanceOf<NewTopStoryLoadingState>(),
+          isInstanceOf<NewTopStoryResultState<List<Story>>>()
         ])
     );
 
