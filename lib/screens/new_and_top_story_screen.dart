@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hcknews/blocs/new_and_top_stories_bloc.dart';
 import 'package:flutter_hcknews/entity/story.dart';
+import 'package:flutter_hcknews/screens/components/story_list_widget.dart';
 import 'package:provider/provider.dart';
 
-import 'components/item_story_widget.dart';
+class NewAndTopStoryScreen extends StatefulWidget {
+  @override
+  _NewAndTopStoryScreenState createState() => _NewAndTopStoryScreenState();
+}
 
-class NewAndTopStoryScreen extends StatelessWidget {
+class _NewAndTopStoryScreenState extends State<NewAndTopStoryScreen> {
+  List<Story> _stories = List<Story>();
+
   @override
   Widget build(BuildContext context) {
     final bloc = Provider.of<NewAndTopStoriesBloc>(context);
@@ -17,17 +23,24 @@ class NewAndTopStoryScreen extends StatelessWidget {
           (BuildContext context, AsyncSnapshot<NewTopStoryState> snapshot) {
         if (snapshot.data is NewTopStoryErrorState) {
           return NewAndTopStoryErrorWidget();
-        } else if (snapshot.data is NewTopStoryResultState) {
-          var stories =
-              (snapshot.data as NewTopStoryResultState<List<Story>>).value;
-          return ListView.builder(
-              itemCount: stories.length,
-              itemBuilder: (context, index) {
-                return ItemStoryWidget(story: stories[index]);
-              });
-        } else {
-          return Center(child: CircularProgressIndicator());
         }
+        if (snapshot.data is NewTopStoryResultState) {
+          _stories =
+              (snapshot.data as NewTopStoryResultState<List<Story>>).value;
+        }
+        return AnimatedCrossFade(
+            sizeCurve: Curves.easeIn,
+            crossFadeState: snapshot.data is NewTopStoryLoadingState
+                ? CrossFadeState.showFirst
+                : CrossFadeState.showSecond,
+            duration: Duration(milliseconds: 300),
+            firstChild: Center(child: CircularProgressIndicator()),
+            secondChild: StoryListWidget(
+              onRefresh: () async {
+                await bloc.fetchNewAndTopStories(refreshing: true);
+              },
+              stories: _stories,
+            ));
       },
     );
   }
@@ -41,4 +54,3 @@ class NewAndTopStoryErrorWidget extends StatelessWidget {
     );
   }
 }
-
