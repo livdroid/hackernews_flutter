@@ -9,8 +9,9 @@ class StoryListWidget extends StatelessWidget {
   final RefreshCallback onRefresh;
   final List<Story> stories;
   final Function(Story) onShare;
+  final Function(String) onTapStory;
 
-  StoryListWidget({this.onRefresh, this.stories, this.onShare});
+  StoryListWidget({this.onRefresh, this.stories, this.onShare, this.onTapStory});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +22,7 @@ class StoryListWidget extends StatelessWidget {
           itemCount: stories.length,
           physics: AlwaysScrollableScrollPhysics(),
           itemBuilder: (context, index) {
-            return ItemStoryWidget(story: stories[index], share: onShare);
+            return ItemStoryWidget(story: stories[index], share: onShare, tapStory: onTapStory);
           }),
     );
   }

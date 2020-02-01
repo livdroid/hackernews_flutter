@@ -42,6 +42,9 @@ class _NewAndTopStoryScreenState extends State<NewAndTopStoryScreen> {
               onShare: (Story story) {
                 bloc.shareStory(story);
               },
+              onTapStory: (String url) async {
+                await bloc.launchUrl(url);
+              },
               stories: _stories,
             ));
       },

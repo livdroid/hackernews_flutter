@@ -1,18 +1,21 @@
 import 'dart:async';
+import 'package:flutter/services.dart';
 import 'package:flutter_hcknews/blocs/base_bloc.dart';
 import 'package:flutter_hcknews/usecases/new_and_top_stories_use_case.dart';
 
 import 'package:flutter_hcknews/entity/story.dart';
 import 'package:share/share.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class NewAndTopStoriesBloc implements BaseBloc {
   final NewAndTopStoriesUseCase _useCase;
-
-  final StreamController<NewTopStoryState> _controller = StreamController<NewTopStoryState>.broadcast();
-
   NewAndTopStoriesBloc(this._useCase);
 
+  final StreamController<NewTopStoryState> _controller = StreamController<NewTopStoryState>.broadcast();
   Stream<NewTopStoryState> get stream => _controller.stream;
+
+  final StreamController<InteractionState> _stateController = StreamController<InteractionState>.broadcast();
+  Stream<InteractionState> get interactionStream => _stateController.stream;
 
   void fetchNewAndTopStories({bool refreshing = false}) async {
     try {
@@ -36,9 +39,32 @@ class NewAndTopStoriesBloc implements BaseBloc {
   }
 
   void shareStory(Story story) {
-    Share.share(story.url);
+    try {
+      Share.share(story.url);
+      _stateController.sink.add(InteractionState());
+    } on PlatformException {
+      _stateController.sink.add(InteractionErrorState());
+    } on FormatException {
+      _stateController.sink.add(InteractionErrorState());
+    }
+  }
+
+  void launchUrl(String url) async {
+    try {
+      if (await canLaunch(url)) {
+        await launch(url);
+        _stateController.add(InteractionState());
+      }
+    } on PlatformException {
+      _stateController.add(InteractionErrorState());
+    }
   }
 }
+
+class InteractionState{}
+
+
+class InteractionErrorState implements InteractionState {}
 
 class NewTopStoryState {}
 
