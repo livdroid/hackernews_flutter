@@ -51,7 +51,7 @@ void main() {
   test(
       "When we ask bloc to fetch stories from the use case "
       "And the use case return list of Story"
-      "Then should send ", () {
+      "Then should send it", () {
     var useCase = MockUseCase();
     var bloc = NewAndTopStoriesBloc(useCase);
 
@@ -72,5 +72,31 @@ void main() {
     );
 
     bloc.fetchNewAndTopStories();
+  });
+
+  test(
+      "When we ask bloc to refetch stories from the use case "
+          "And the use case return list of Story"
+          "Then should send it", () {
+    var useCase = MockUseCase();
+    var bloc = NewAndTopStoriesBloc(useCase);
+
+    when(useCase.fetchStories()).thenAnswer(
+            (_) => Future<List<Story>>.value([
+          Story(),
+          Story(),
+          Story()
+        ])
+    );
+
+    expect(
+        bloc.stream,
+        emitsInOrder([
+          isInstanceOf<NewTopStoryRefreshState>(),
+          isInstanceOf<NewTopStoryResultState<List<Story>>>()
+        ])
+    );
+
+    bloc.fetchNewAndTopStories(refreshing: true);
   });
 }

@@ -13,9 +13,13 @@ class NewAndTopStoriesBloc implements BaseBloc {
 
   Stream<NewTopStoryState> get stream => _controller.stream;
 
-  void fetchNewAndTopStories() async {
+  void fetchNewAndTopStories({bool refreshing = false}) async {
     try {
-      _controller.sink.add(NewTopStoryLoadingState());
+      if (refreshing) {
+        _controller.sink.add(NewTopStoryRefreshState());
+      } else {
+        _controller.sink.add(NewTopStoryLoadingState());
+      }
       var storyList = await _useCase.fetchStories();
       _controller.sink.add(NewTopStoryResultState<List<Story>>(storyList));
     } on FetchStoriesException {
@@ -34,6 +38,8 @@ class NewAndTopStoriesBloc implements BaseBloc {
 class NewTopStoryState {}
 
 class NewTopStoryLoadingState extends NewTopStoryState {}
+
+class NewTopStoryRefreshState extends NewTopStoryState {}
 
 class NewTopStoryResultState<T> extends NewTopStoryState {
   T _value;
