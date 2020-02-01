@@ -8,8 +8,9 @@ typedef RefreshCallback = Future<void> Function();
 class StoryListWidget extends StatelessWidget {
   final RefreshCallback onRefresh;
   final List<Story> stories;
+  final Function(Story) onShare;
 
-  StoryListWidget({this.onRefresh, this.stories});
+  StoryListWidget({this.onRefresh, this.stories, this.onShare});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +21,7 @@ class StoryListWidget extends StatelessWidget {
           itemCount: stories.length,
           physics: AlwaysScrollableScrollPhysics(),
           itemBuilder: (context, index) {
-            return ItemStoryWidget(story: stories[index]);
+            return ItemStoryWidget(story: stories[index], share: onShare);
           }),
     );
   }
