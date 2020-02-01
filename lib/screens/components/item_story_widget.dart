@@ -4,8 +4,8 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 
 class ItemStoryWidget extends StatelessWidget {
   final Story story;
-
-  ItemStoryWidget({Key key, this.story}) : super(key: key);
+  final Function(Story) share;
+  ItemStoryWidget({Key key, this.story, this.share}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,11 +18,7 @@ class ItemStoryWidget extends StatelessWidget {
           caption: 'Share',
           color: Colors.deepOrange[800],
           icon: Icons.share,
-          ),
-        IconSlideAction(
-          caption: 'Save',
-          color:  Colors.deepOrange[600],
-          icon: Icons.favorite,
+          onTap: () { share(story); },
           ),
       ],
       child: Column(

@@ -7,6 +7,7 @@ class Story {
   int time;
   int score;
   String type;
+  String url;
 
   Story(
       {this.by,
@@ -16,7 +17,8 @@ class Story {
         this.title,
         this.time,
         this.score,
-        this.type});
+        this.type,
+        this.url});
 
   Story.fromJson(Map<String, dynamic> json) {
     by = json['by'];
@@ -27,6 +29,7 @@ class Story {
     time = json['time'];
     score = json['score'] != null ? json['score'] : 0;
     type = json['type'];
+    url = json['url'];
   }
 
   Map<String, dynamic> toJson() {
@@ -39,6 +42,7 @@ class Story {
     data['time'] = this.time;
     data['score'] = this.score;
     data['type'] = this.type;
+    data['url'] = this.url;
     return data;
   }
 }

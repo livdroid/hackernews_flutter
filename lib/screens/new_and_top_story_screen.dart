@@ -39,6 +39,9 @@ class _NewAndTopStoryScreenState extends State<NewAndTopStoryScreen> {
               onRefresh: () async {
                 await bloc.fetchNewAndTopStories(refreshing: true);
               },
+              onShare: (Story story) {
+                bloc.shareStory(story);
+              },
               stories: _stories,
             ));
       },
