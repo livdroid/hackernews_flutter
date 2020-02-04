@@ -1,4 +1,5 @@
 import 'package:flutter_hcknews/blocs/new_and_top_stories_bloc.dart';
+import 'package:flutter_hcknews/blocs/viewmodels/new_and_top_story_view_model.dart';
 import 'package:flutter_hcknews/entity/story.dart';
 import 'package:flutter_hcknews/plugin/share_plugin.dart';
 import 'package:flutter_hcknews/plugin/url_launcher_plugin.dart';
@@ -34,9 +35,12 @@ void main() {
     expect(
         bloc.stream,
         emitsInOrder([
-          isInstanceOf<NewTopStoryLoadingState>(),
-          isInstanceOf<NewTopStoryErrorState>()
-        ]));
+          isInstanceOf<NewAndTopStoryViewModel>(),
+          isInstanceOf<NewAndTopStoryViewModel>()
+//          equals(NewAndTopStoryViewModel(error: "", isRefreshing: false, isLoading: true, stories: List())),
+//          equals(NewAndTopStoryViewModel(error: "Network Error", isRefreshing: false, isLoading: true, stories: List()))
+        ])
+    );
 
     bloc.fetchNewAndTopStories();
   });
@@ -50,9 +54,10 @@ void main() {
     expect(
         bloc.stream,
         emitsInOrder([
-          isInstanceOf<NewTopStoryLoadingState>(),
-          isInstanceOf<NewTopStoryErrorState>()
-        ]));
+          isInstanceOf<NewAndTopStoryViewModel>(),
+          isInstanceOf<NewAndTopStoryViewModel>()
+        ])
+    );
 
     bloc.fetchNewAndTopStories();
   });
@@ -67,9 +72,10 @@ void main() {
     expect(
         bloc.stream,
         emitsInOrder([
-          isInstanceOf<NewTopStoryLoadingState>(),
-          isInstanceOf<NewTopStoryResultState<List<Story>>>()
-        ]));
+          isInstanceOf<NewAndTopStoryViewModel>(),
+          isInstanceOf<NewAndTopStoryViewModel>()
+        ])
+    );
 
     bloc.fetchNewAndTopStories();
   });
@@ -84,9 +90,10 @@ void main() {
     expect(
         bloc.stream,
         emitsInOrder([
-          isInstanceOf<NewTopStoryRefreshState>(),
-          isInstanceOf<NewTopStoryResultState<List<Story>>>()
-        ]));
+          isInstanceOf<NewAndTopStoryViewModel>(),
+          isInstanceOf<NewAndTopStoryViewModel>()
+        ])
+    );
 
     bloc.fetchNewAndTopStories(refreshing: true);
   });
