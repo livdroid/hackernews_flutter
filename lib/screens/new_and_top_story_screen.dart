@@ -40,7 +40,7 @@ class _NewAndTopStoryScreenState extends State<NewAndTopStoryScreen> {
                 await bloc.fetchNewAndTopStories(refreshing: true);
               },
               onShare: (Story story) {
-                bloc.shareStory(story);
+                bloc.shareStory(story.url);
               },
               onTapStory: (String url) async {
                 await bloc.launchUrl(url);
