@@ -27,4 +27,14 @@ class NewAndTopStoryViewModel {
       error: error ?? _error
     );
   }
+
+  @override
+  bool operator ==(other) {
+    return _isLoading == other.isLoading &&
+           _isRefreshing == other.isRefreshing &&
+           _stories.length == other.stories.length &&
+           _error == other.error;
+  }
+
+
 }

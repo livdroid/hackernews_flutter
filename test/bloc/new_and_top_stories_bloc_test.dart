@@ -34,11 +34,9 @@ void main() {
 
     expect(
         bloc.stream,
-        emitsInOrder([
-          isInstanceOf<NewAndTopStoryViewModel>(),
-          isInstanceOf<NewAndTopStoryViewModel>()
-//          equals(NewAndTopStoryViewModel(error: "", isRefreshing: false, isLoading: true, stories: List())),
-//          equals(NewAndTopStoryViewModel(error: "Network Error", isRefreshing: false, isLoading: true, stories: List()))
+        emitsInOrder(<NewAndTopStoryViewModel>[
+          NewAndTopStoryViewModel(error: "", isRefreshing: false, isLoading: true, stories: List()),
+          NewAndTopStoryViewModel(error: "Network Error", isRefreshing: false, isLoading: false, stories: List())
         ])
     );
 
@@ -53,9 +51,9 @@ void main() {
 
     expect(
         bloc.stream,
-        emitsInOrder([
-          isInstanceOf<NewAndTopStoryViewModel>(),
-          isInstanceOf<NewAndTopStoryViewModel>()
+        emitsInOrder(<NewAndTopStoryViewModel>[
+          NewAndTopStoryViewModel(error: "", isRefreshing: false, isLoading: true, stories: List()),
+          NewAndTopStoryViewModel(error: "No story found", isRefreshing: false, isLoading: false, stories: List())
         ])
     );
 
@@ -71,9 +69,13 @@ void main() {
 
     expect(
         bloc.stream,
-        emitsInOrder([
-          isInstanceOf<NewAndTopStoryViewModel>(),
-          isInstanceOf<NewAndTopStoryViewModel>()
+        emitsInOrder(<NewAndTopStoryViewModel>[
+          NewAndTopStoryViewModel(error: "", isRefreshing: false, isLoading: true, stories: List()),
+          NewAndTopStoryViewModel(error: "", isRefreshing: false, isLoading: false, stories: <Story>[
+            Story(),
+            Story(),
+            Story()
+          ])
         ])
     );
 
@@ -89,13 +91,29 @@ void main() {
 
     expect(
         bloc.stream,
-        emitsInOrder([
-          isInstanceOf<NewAndTopStoryViewModel>(),
-          isInstanceOf<NewAndTopStoryViewModel>()
+        emitsInOrder(<NewAndTopStoryViewModel>[
+          NewAndTopStoryViewModel(error: "", isRefreshing: false, isLoading: true, stories: <Story>[
+          ]),
+          NewAndTopStoryViewModel(error: "", isRefreshing: false, isLoading: false, stories: <Story>[
+            Story(),
+            Story(),
+            Story()
+          ]),
+          NewAndTopStoryViewModel(error: "", isRefreshing: true, isLoading: false, stories: <Story>[
+            Story(),
+            Story(),
+            Story()
+          ]),
+          NewAndTopStoryViewModel(error: "", isRefreshing: false, isLoading: false, stories: <Story>[
+            Story(),
+            Story(),
+            Story()
+          ])
         ])
     );
 
-    bloc.fetchNewAndTopStories(refreshing: true);
+    await bloc.fetchNewAndTopStories();
+    await bloc.fetchNewAndTopStories(refreshing: true);
   });
 
   test(
