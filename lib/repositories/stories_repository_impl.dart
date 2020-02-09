@@ -16,7 +16,7 @@ class StoriesRepositoryImpl implements StoriesRepository {
   StoriesRepositoryImpl({@required this.hackerNewsService});
 
   @override
-  Future<List<Story>> getNewAndTopStories() async {
+  Future<List<Story>> getNewAndTopStories({int page = 0}) async {
     final idList = await hackerNewsService.fetchNewsAndTopStories();
     final shortList = idList.sublist(0, 9);
     List<Story> list = await Future.wait(
