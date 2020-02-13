@@ -1,17 +1,19 @@
 import 'dart:async';
 import 'package:flutter_hcknews/blocs/base_bloc.dart';
+import 'package:flutter_hcknews/plugin/share_plugin.dart';
+import 'package:flutter_hcknews/plugin/url_launcher_plugin.dart';
 import 'package:flutter_hcknews/usecases/new_and_top_stories_use_case.dart';
+import 'package:flutter/services.dart';
 
 import 'package:flutter_hcknews/entity/story.dart';
-import 'package:share/share.dart';
 
 class NewAndTopStoriesBloc implements BaseBloc {
   final NewAndTopStoriesUseCase _useCase;
+  final SharePlugin _sharePlugin;
+  final URLLauncherPlugin _urlLauncherPlugin;
+  NewAndTopStoriesBloc(this._useCase, this._sharePlugin, this._urlLauncherPlugin);
 
   final StreamController<NewTopStoryState> _controller = StreamController<NewTopStoryState>.broadcast();
-
-  NewAndTopStoriesBloc(this._useCase);
-
   Stream<NewTopStoryState> get stream => _controller.stream;
 
   void fetchNewAndTopStories({bool refreshing = false}) async {
@@ -35,10 +37,27 @@ class NewAndTopStoriesBloc implements BaseBloc {
     _controller.close();
   }
 
-  void shareStory(Story story) {
-    Share.share(story.url);
+  Future<bool> shareStory(String url) async {
+    try {
+      await _sharePlugin.share(url);
+      return true;
+    } on SharePlateformException {
+      return false;
+    } on ShareFormatException {
+      return false;
+    }
+  }
+
+  Future<bool> launchUrl(String url) async {
+    try {
+      await _urlLauncherPlugin.launchUrl(url);
+      return true;
+    } on URLLauncherPlateformException {
+      return false;
+    }
   }
 }
+
 
 class NewTopStoryState {}
 
