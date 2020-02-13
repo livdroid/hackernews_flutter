@@ -3,6 +3,7 @@ import 'package:flutter_hcknews/blocs/base_bloc.dart';
 import 'package:flutter_hcknews/plugin/share_plugin.dart';
 import 'package:flutter_hcknews/plugin/url_launcher_plugin.dart';
 import 'package:flutter_hcknews/usecases/new_and_top_stories_use_case.dart';
+import 'package:flutter/services.dart';
 
 import 'package:flutter_hcknews/entity/story.dart';
 
@@ -36,12 +37,24 @@ class NewAndTopStoriesBloc implements BaseBloc {
     _controller.close();
   }
 
-  void shareStory(String url) async {
-    await _sharePlugin.share(url);
+  Future<bool> shareStory(String url) async {
+    try {
+      await _sharePlugin.share(url);
+      return true;
+    } on SharePlateformException {
+      return false;
+    } on ShareFormatException {
+      return false;
+    }
   }
 
-  void launchUrl(String url) async {
-    await _urlLauncherPlugin.launchUrl(url);
+  Future<bool> launchUrl(String url) async {
+    try {
+      await _urlLauncherPlugin.launchUrl(url);
+      return true;
+    } on URLLauncherPlateformException {
+      return false;
+    }
   }
 }
 
