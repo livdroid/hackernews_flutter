@@ -85,7 +85,7 @@ void main() {
   test(
       "When we ask bloc to refetch stories from the use case "
       "And the use case return list of Story"
-      "Then should send it", () {
+      "Then should send it", () async {
     when(useCase.fetchStories()).thenAnswer(
         (_) => Future<List<Story>>.value([Story(), Story(), Story()]));
 
