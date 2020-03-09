@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter_hcknews/blocs/base_bloc.dart';
 import 'package:flutter_hcknews/plugin/share_plugin.dart';
 import 'package:flutter_hcknews/plugin/url_launcher_plugin.dart';
+import 'package:flutter_hcknews/blocs/viewmodels/new_and_top_story_view_model.dart';
 import 'package:flutter_hcknews/usecases/new_and_top_stories_use_case.dart';
 import 'package:flutter/services.dart';
 
@@ -13,23 +14,24 @@ class NewAndTopStoriesBloc implements BaseBloc {
   final URLLauncherPlugin _urlLauncherPlugin;
   NewAndTopStoriesBloc(this._useCase, this._sharePlugin, this._urlLauncherPlugin);
 
-  final StreamController<NewTopStoryState> _controller = StreamController<NewTopStoryState>.broadcast();
-  Stream<NewTopStoryState> get stream => _controller.stream;
+  final StreamController<NewAndTopStoryViewModel> _controller = StreamController<NewAndTopStoryViewModel>.broadcast();
+  Stream<NewAndTopStoryViewModel> get stream => _controller.stream;
+
+  NewAndTopStoryViewModel _viewModel = NewAndTopStoryViewModel();
 
   void fetchNewAndTopStories({bool refreshing = false}) async {
     try {
-      if (refreshing) {
-        _controller.sink.add(NewTopStoryRefreshState());
-      } else {
-        _controller.sink.add(NewTopStoryLoadingState());
-      }
+      _viewModel = _viewModel.copy(isRefreshing: refreshing, isLoading: !refreshing);
+      _controller.sink.add(_viewModel);
+
       var storyList = await _useCase.fetchStories();
-      _controller.sink.add(NewTopStoryResultState<List<Story>>(storyList));
+      _viewModel = _viewModel.copy(isRefreshing: false, isLoading: false, stories: storyList);
     } on FetchStoriesException {
-      _controller.sink.add(NewTopStoryErrorState("Network Error"));
+      _viewModel = _viewModel.copy(isRefreshing: false, isLoading: false, error: "Network Error", stories: List());
     } on EmptyStoriesException {
-      _controller.sink.add(NewTopStoryErrorState("No Story found"));
+      _viewModel = _viewModel.copy(isRefreshing: false, isLoading: false, error: "No story found", stories: List());
     }
+    _controller.sink.add(_viewModel);
   }
 
   @override
@@ -56,27 +58,4 @@ class NewAndTopStoriesBloc implements BaseBloc {
       return false;
     }
   }
-}
-
-
-class NewTopStoryState {}
-
-class NewTopStoryLoadingState extends NewTopStoryState {}
-
-class NewTopStoryRefreshState extends NewTopStoryState {}
-
-class NewTopStoryResultState<T> extends NewTopStoryState {
-  T _value;
-
-  NewTopStoryResultState(this._value);
-
-  T get value => _value;
-}
-
-class NewTopStoryErrorState extends NewTopStoryState {
-  String _errorMsg;
-
-  NewTopStoryErrorState(this._errorMsg);
-
-  String get error => _errorMsg;
 }

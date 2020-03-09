@@ -1,4 +1,5 @@
 import 'package:flutter_hcknews/blocs/new_and_top_stories_bloc.dart';
+import 'package:flutter_hcknews/blocs/viewmodels/new_and_top_story_view_model.dart';
 import 'package:flutter_hcknews/entity/story.dart';
 import 'package:flutter_hcknews/plugin/share_plugin.dart';
 import 'package:flutter_hcknews/plugin/url_launcher_plugin.dart';
@@ -33,10 +34,11 @@ void main() {
 
     expect(
         bloc.stream,
-        emitsInOrder([
-          isInstanceOf<NewTopStoryLoadingState>(),
-          isInstanceOf<NewTopStoryErrorState>()
-        ]));
+        emitsInOrder(<NewAndTopStoryViewModel>[
+          NewAndTopStoryViewModel(error: "", isRefreshing: false, isLoading: true, stories: List()),
+          NewAndTopStoryViewModel(error: "Network Error", isRefreshing: false, isLoading: false, stories: List())
+        ])
+    );
 
     bloc.fetchNewAndTopStories();
   });
@@ -49,10 +51,11 @@ void main() {
 
     expect(
         bloc.stream,
-        emitsInOrder([
-          isInstanceOf<NewTopStoryLoadingState>(),
-          isInstanceOf<NewTopStoryErrorState>()
-        ]));
+        emitsInOrder(<NewAndTopStoryViewModel>[
+          NewAndTopStoryViewModel(error: "", isRefreshing: false, isLoading: true, stories: List()),
+          NewAndTopStoryViewModel(error: "No story found", isRefreshing: false, isLoading: false, stories: List())
+        ])
+    );
 
     bloc.fetchNewAndTopStories();
   });
@@ -66,10 +69,15 @@ void main() {
 
     expect(
         bloc.stream,
-        emitsInOrder([
-          isInstanceOf<NewTopStoryLoadingState>(),
-          isInstanceOf<NewTopStoryResultState<List<Story>>>()
-        ]));
+        emitsInOrder(<NewAndTopStoryViewModel>[
+          NewAndTopStoryViewModel(error: "", isRefreshing: false, isLoading: true, stories: List()),
+          NewAndTopStoryViewModel(error: "", isRefreshing: false, isLoading: false, stories: <Story>[
+            Story(),
+            Story(),
+            Story()
+          ])
+        ])
+    );
 
     bloc.fetchNewAndTopStories();
   });
@@ -77,18 +85,35 @@ void main() {
   test(
       "When we ask bloc to refetch stories from the use case "
       "And the use case return list of Story"
-      "Then should send it", () {
+      "Then should send it", () async {
     when(useCase.fetchStories()).thenAnswer(
         (_) => Future<List<Story>>.value([Story(), Story(), Story()]));
 
     expect(
         bloc.stream,
-        emitsInOrder([
-          isInstanceOf<NewTopStoryRefreshState>(),
-          isInstanceOf<NewTopStoryResultState<List<Story>>>()
-        ]));
+        emitsInOrder(<NewAndTopStoryViewModel>[
+          NewAndTopStoryViewModel(error: "", isRefreshing: false, isLoading: true, stories: <Story>[
+          ]),
+          NewAndTopStoryViewModel(error: "", isRefreshing: false, isLoading: false, stories: <Story>[
+            Story(),
+            Story(),
+            Story()
+          ]),
+          NewAndTopStoryViewModel(error: "", isRefreshing: true, isLoading: false, stories: <Story>[
+            Story(),
+            Story(),
+            Story()
+          ]),
+          NewAndTopStoryViewModel(error: "", isRefreshing: false, isLoading: false, stories: <Story>[
+            Story(),
+            Story(),
+            Story()
+          ])
+        ])
+    );
 
-    bloc.fetchNewAndTopStories(refreshing: true);
+    await bloc.fetchNewAndTopStories();
+    await bloc.fetchNewAndTopStories(refreshing: true);
   });
 
   test(

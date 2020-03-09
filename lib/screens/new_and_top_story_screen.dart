@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hcknews/blocs/new_and_top_stories_bloc.dart';
+import 'package:flutter_hcknews/blocs/viewmodels/new_and_top_story_view_model.dart';
 import 'package:flutter_hcknews/entity/story.dart';
 import 'package:flutter_hcknews/screens/components/story_list_widget.dart';
 import 'package:provider/provider.dart';
@@ -10,27 +11,26 @@ class NewAndTopStoryScreen extends StatefulWidget {
 }
 
 class _NewAndTopStoryScreenState extends State<NewAndTopStoryScreen> {
-  List<Story> _stories = List<Story>();
 
   @override
   Widget build(BuildContext context) {
     final bloc = Provider.of<NewAndTopStoriesBloc>(context);
     bloc.fetchNewAndTopStories();
 
-    return StreamBuilder<NewTopStoryState>(
+    return StreamBuilder<NewAndTopStoryViewModel>(
       stream: bloc.stream,
       builder:
-          (BuildContext context, AsyncSnapshot<NewTopStoryState> snapshot) {
-        if (snapshot.data is NewTopStoryErrorState) {
-          return NewAndTopStoryErrorWidget();
+          (BuildContext context, AsyncSnapshot<NewAndTopStoryViewModel> snapshot) {
+        if (snapshot.data == null) {
+          return Container();
         }
-        if (snapshot.data is NewTopStoryResultState) {
-          _stories =
-              (snapshot.data as NewTopStoryResultState<List<Story>>).value;
+
+        if (snapshot.data.error.isNotEmpty) {
+          return NewAndTopStoryErrorWidget();
         }
         return AnimatedCrossFade(
             sizeCurve: Curves.easeIn,
-            crossFadeState: snapshot.data is NewTopStoryLoadingState
+            crossFadeState: snapshot.data.isLoading
                 ? CrossFadeState.showFirst
                 : CrossFadeState.showSecond,
             duration: Duration(milliseconds: 300),
@@ -45,7 +45,7 @@ class _NewAndTopStoryScreenState extends State<NewAndTopStoryScreen> {
               onTapStory: (String url) async {
                 await bloc.launchUrl(url);
               },
-              stories: _stories,
+              stories: snapshot.data.stories,
             ));
       },
     );

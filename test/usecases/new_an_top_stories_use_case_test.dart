@@ -16,7 +16,7 @@ void main() {
 
     when(repository.getNewAndTopStories()).thenThrow(GetStoriesException());
 
-    useCase.fetchStories().catchError(expectAsync1((e) {
+    await useCase.fetchStories().catchError(expectAsync1((e) {
       expect(e, isInstanceOf<FetchStoriesException>());
     }));
 
@@ -33,7 +33,7 @@ void main() {
     when(repository.getNewAndTopStories())
         .thenAnswer((_) => Future<List<Story>>.value([]));
 
-    useCase.fetchStories().catchError(expectAsync1((e) {
+    await useCase.fetchStories().catchError(expectAsync1((e) {
       expect(e, isInstanceOf<EmptyStoriesException>());
     }));
 
@@ -60,5 +60,43 @@ void main() {
 
     expect(storyList, expectedStoryList);
     verify(repository.getNewAndTopStories());
+  });
+
+  test(
+      "When fetch next page of new and top stories "
+          "And repository throw an NoMoreStoriesException"
+          "Then should rethrow it", () async {
+    var repository = MockStoriesRepository();
+    var useCase = NewAndTopStoriesUseCaseImpl(repository);
+
+    when(repository.getNewAndTopStories(page: 1)).thenThrow(NoMoreStoriesException());
+
+    await useCase.fetchStories(page: 1).catchError(expectAsync1((e) {
+      expect(e, isInstanceOf<EndOfStoriesException>());
+    }));
+
+    verify(repository.getNewAndTopStories(page: 1));
+  });
+
+  test(
+      "When fetch next page of new and top stories "
+          "And repository return a filled story list "
+          "Then should return a list of story", () async {
+    var repository = MockStoriesRepository();
+    var useCase = NewAndTopStoriesUseCaseImpl(repository);
+    var expectedStoryList = [
+      Story(),
+      Story(),
+      Story(),
+      Story()
+    ];
+
+    when(repository.getNewAndTopStories(page: 1))
+        .thenAnswer((_) => Future<List<Story>>.value(expectedStoryList));
+
+    var storyList = await useCase.fetchStories(page: 1);
+
+    expect(storyList, expectedStoryList);
+    verify(repository.getNewAndTopStories(page: 1));
   });
 }
